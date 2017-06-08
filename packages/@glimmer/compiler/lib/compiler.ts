@@ -1,4 +1,4 @@
-import { preprocess } from "@glimmer/syntax";
+import { preprocess, AST } from "@glimmer/syntax";
 import TemplateCompiler, { CompileOptions } from "./template-compiler";
 import { SerializedTemplateWithLazyBlock, TemplateJavascript, TemplateMeta } from "@glimmer/wire-format";
 import { Option } from "@glimmer/interfaces";
@@ -59,6 +59,11 @@ const defaultOptions: PrecompileOptions<TemplateMeta> = {
 export function precompile<T extends TemplateMeta>(string: string, options?: PrecompileOptions<T>): TemplateJavascript;
 export function precompile(string: string, options: PrecompileOptions<TemplateMeta> = defaultOptions): TemplateJavascript {
   let ast = preprocess(string, options);
+  return compileAST(ast, options);
+}
+
+export function compileAST<T extends TemplateMeta>(ast: AST, options?: PrecompileOptions<T>): TemplateJavascript;
+export function compileAST(ast: AST, options: PrecompileOptions<TemplateMeta> = defaultOptions): TemplateJavascript {
   let { block, meta } = TemplateCompiler.compile(options, ast);
   let idFn = options.id || defaultId;
   let blockJSON = JSON.stringify(block.toJSON());
